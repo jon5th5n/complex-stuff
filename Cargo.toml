@@ -1,0 +1,11 @@
+[package]
+name = "complex-stuff"
+description = "A library for working with complex numbers in rust"
+authors = ["Jonathan Kappler <kapplerjonathan5@gmail.com>"]
+repository = "https://github.com/jon5th5n/complex-stuff"
+keywords = ["complex", "numbers", "math"]
+license = "MIT"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
