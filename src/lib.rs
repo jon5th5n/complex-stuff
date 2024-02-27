@@ -373,6 +373,7 @@ impl Complex {
     pub fn opposite(self) -> Self {
         let re = -self.cartesian.re;
         let im = -self.cartesian.im;
+
         Self::new_cartesian(re, im)
     }
 
@@ -387,7 +388,16 @@ impl Complex {
     /// let reciprocal = complex.reciprocal();
     /// ```
     pub fn reciprocal(self) -> Option<Self> {
-        Self::one() / self
+        let sqr_mag = self.cartesian.re * self.cartesian.re + self.cartesian.im * self.cartesian.im;
+
+        if sqr_mag == 0.0 {
+            return None;
+        }
+
+        let re = self.cartesian.re / sqr_mag;
+        let im = -self.cartesian.im / sqr_mag;
+
+        Some(Self::new_cartesian(re, im))
     }
 }
 
@@ -612,7 +622,7 @@ impl Complex {
         Some(Self::new_polar(mag, ang))
     }
 
-    /// Retuns the nth root of the complex number with n being any other complex number.
+    /// Returns the nth root of the complex number with n being any other complex number.
     ///
     /// Returns `None` when the result is undefined or infinite.
     ///
@@ -627,7 +637,26 @@ impl Complex {
     /// let result = complex.root(n)?;
     /// ```
     pub fn root(self, other: Self) -> Option<Self> {
-        self.pow(other.reciprocal()?)
+        if other.polar.mag == 0.0 {
+            return None;
+        }
+
+        if self.polar.mag == 0.0 {
+            return Some(Self::zero());
+        }
+
+        let b_mag = self.polar.mag;
+        let b_ang = self.polar.ang;
+
+        let r_re = other.cartesian.re;
+        let r_im = other.cartesian.im;
+
+        let r_sqr_mag = r_re * r_re + r_im * r_im;
+
+        let mag = ((r_re * b_mag.ln() + r_im * b_ang) / r_sqr_mag).exp();
+        let ang = (r_re * b_ang - r_im * b_mag.ln()) / r_sqr_mag;
+
+        Some(Self::new_polar(mag, ang))
     }
 }
 
